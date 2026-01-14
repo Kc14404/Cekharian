@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Jodoh & Keserasian Pasangan - Primbon Jawa Online</title>
+    <meta name="description" content="Cek kecocokan jodoh berdasarkan Weton Jawa. Hitung tingkat keserasian hubungan asmara Anda secara akurat menurut Primbon.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F3F4F6; }
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .ad-placeholder {
+            background-color: #e5e7eb; border: 2px dashed #9ca3af; color: #6b7280;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-gray-800">
+
+    <nav class="w-full bg-white shadow-sm p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="font-bold text-xl text-pink-600 tracking-tight flex items-center gap-1">
+                <span>❤️</span> Jodoh<span class="text-gray-800">Ku</span>
+            </a>
+            <button onclick="toggleLanguage()" class="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full hover:bg-gray-200 transition text-sm font-semibold">
+                <span id="lang-icon">🇬🇧</span>
+                <span id="lang-text">English</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="w-full bg-white border-b border-gray-200 py-4">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <div class="ad-placeholder w-full max-w-[728px] h-[90px] hidden md:flex">Google AdSense - Leaderboard</div>
+            <div class="ad-placeholder w-[320px] h-[50px] md:hidden flex">Mobile Banner</div>
+        </div>
+    </div>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-pink-100">
+                
+                <div class="text-center mb-8">
+                    <h1 id="ui-title" class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Cek Kecocokan Jodoh</h1>
+                    <p id="ui-desc" class="text-gray-500 text-sm">Hitung prediksi hubungan asmara berdasarkan weton kedua pasangan.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <label id="ui-label-1" class="block text-sm font-bold text-blue-800 mb-2">Tanggal Lahir Anda</label>
+                        <input type="date" id="date1" class="w-full p-2.5 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+                    <div class="bg-pink-50 p-4 rounded-xl border border-pink-100">
+                        <label id="ui-label-2" class="block text-sm font-bold text-pink-800 mb-2">Tanggal Lahir Pasangan</label>
+                        <input type="date" id="date2" class="w-full p-2.5 bg-white border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
+                    </div>
+                </div>
+
+                <button onclick="calculateJodoh()" id="ui-btn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-pink-200 transform active:scale-95">
+                    ❤️ Lihat Ramalan Cinta
+                </button>
+
+                <div class="mt-8 flex justify-center">
+                    <div class="ad-placeholder w-[300px] h-[250px]">Google AdSense - Rect</div>
+                </div>
+
+                <div id="result" class="mt-8 hidden fade-in max-w-lg mx-auto">
+                    <div class="relative bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl p-6 border border-pink-200 text-center">
+                        <p id="ui-result-title" class="text-xs font-bold text-pink-600 uppercase tracking-wider">Hasil Ramalan</p>
+                        
+                        <h2 id="outcomeName" class="text-4xl font-extrabold text-gray-800 mt-3 mb-1">--</h2>
+                        <p id="totalNeptu" class="text-sm font-medium text-gray-500 mb-4">Total Neptu: --</p>
+
+                        <div class="bg-white p-5 rounded-xl border border-pink-100 shadow-sm text-left mb-4">
+                            <p id="outcomeDesc" class="text-gray-700 text-base leading-relaxed">--</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 bg-white/50 p-3 rounded-lg">
+                            <div class="text-left px-2 border-r border-gray-300">
+                                <span class="block font-bold text-blue-600">Anda (P1)</span>
+                                <span id="detail1">--</span>
+                            </div>
+                            <div class="text-right px-2">
+                                <span class="block font-bold text-pink-600">Pasangan (P2)</span>
+                                <span id="detail2">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="index.html" class="text-sm text-pink-600 hover:underline font-semibold">← Kembali ke Cek Weton (Back to Home)</a>
+            </div>
+        </div>
+
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="font-bold text-gray-700 mb-2">Menu</h3>
+                <ul class="text-sm space-y-2 text-pink-600">
+                    <li>• <a href="index.html" class="hover:underline">Cek Weton Harian</a></li>
+                    <li>• <a href="cek-jodoh.html" class="font-bold text-gray-800">Cek Jodoh (Active)</a></li>
+                </ul>
+            </div>
+            <div class="sticky top-24">
+                <div class="ad-placeholder w-full max-w-[300px] h-[600px] mx-auto">Google AdSense - Sidebar</div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        // --- LOGIC DATA ---
+        let currentLang = 'id';
+        const dayValues = [5, 4, 3, 7, 8, 6, 9]; 
+        const pasaranNames = ['Legi', 'Pahing', 'Pon', 'Wage', 'Kliwon'];
+        const pasaranValues = {'Legi': 5, 'Pahing': 9, 'Pon': 7, 'Wage': 4, 'Kliwon': 8};
+        const idDayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const enDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        // 8 CYCLES of JODOH (Logic Remainder)
+        // Logic: (Sum Neptu A + B) -> Mapping
+        // Standard Mapping based on Remainder of 8 (or 9 in some traditions, here using popular 8-cycle)
+        // Ref: Pegat (1, 9, 17, 25, 33), Ratu (2, 10, 18, 26, 34)...
+        const jodohMeanings = {
+            1: { name: "PEGAT", id: "Masalah: Hubungan ini mungkin menghadapi banyak rintangan, pertengkaran, atau bahkan perpisahan di masa depan. Perlu kesabaran ekstra.", en: "Problematic: This relationship may face many obstacles, quarrels, or even separation. Requires extra patience." },
+            2: { name: "RATU", id: "Sempurna: Pasangan ini dianggap sangat serasi, dihargai orang lain, dan berpotensi hidup bahagia serta harmonis.", en: "Perfect: Considered very compatible, respected by others, with potential for a happy and harmonious life." },
+            3: { name: "JODOH", id: "Jodoh Sejati: Kalian memang ditakdirkan bersama. Hubungan akan rukun, saling menerima, dan awet hingga tua.", en: "Soulmates: You are destined to be together. The relationship will be harmonious, accepting, and lasting." },
+            4: { name: "TOPO", id: "Ujian Awal: Awal pernikahan mungkin akan mengalami kesulitan ekonomi atau penyesuaian, namun akan sukses dan bahagia di kemudian hari.", en: "Initial Test: Early marriage may face financial or adjustment difficulties, but will be successful and happy later." },
+            5: { name: "TINARI", id: "Bahagia: Pasangan ini akan menemukan kebahagiaan dan kemudahan dalam mencari rezeki. Hidup serba kecukupan.", en: "Happy: This couple will find happiness and ease in seeking fortune. A life of sufficiency." },
+            6: { name: "PADU", id: "Pertengkaran: Sering terjadi cekcok untuk masalah sepele, namun tidak sampai pada perceraian. Hanya perlu menekan ego.", en: "Quarrels: Frequent bickering over trivial matters, but unlikely to lead to divorce. Just need to suppress egos." },
+            7: { name: "SUJANAN", id: "Waspada: Ada risiko perselingkuhan atau ketidaksetiaan dari salah satu pihak. Perlu komunikasi yang sangat kuat.", en: "Warning: Risk of infidelity or disloyalty from one party. Needs very strong communication." },
+            8: { name: "PESTHI", id: "Harmonis: Hubungan yang sangat damai, rukun, dan tenteram. Sangat sedikit masalah yang berarti.", en: "Harmonious: A very peaceful, concordant, and serene relationship. Very few significant problems." },
+            0: { name: "PESTHI", id: "Harmonis: Hubungan yang sangat damai, rukun, dan tenteram.", en: "Harmonious: A very peaceful and serene relationship." } // Remainder 0 treated as 8
+        };
+
+        const translations = {
+            id: {
+                title: "Cek Kecocokan Jodoh", desc: "Hitung prediksi hubungan asmara berdasarkan weton.",
+                l1: "Tanggal Lahir Anda", l2: "Tanggal Lahir Pasangan",
+                btn: "❤️ Lihat Ramalan Cinta", resultTitle: "Hasil Ramalan",
+                alert: "Mohon isi kedua tanggal lahir!",
+                langText: "English", langIcon: "🇬🇧"
+            },
+            en: {
+                title: "Love Compatibility Test", desc: "Calculate relationship prediction based on Javanese Weton.",
+                l1: "Your Birth Date", l2: "Partner's Birth Date",
+                btn: "❤️ Check Compatibility", resultTitle: "Prediction Result",
+                alert: "Please fill in both dates!",
+                langText: "Indonesia", langIcon: "🇮🇩"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'id' ? 'en' : 'id';
+            const t = translations[currentLang];
+            document.getElementById('ui-title').innerText = t.title;
+            document.getElementById('ui-desc').innerText = t.desc;
+            document.getElementById('ui-label-1').innerText = t.l1;
+            document.getElementById('ui-label-2').innerText = t.l2;
+            document.getElementById('ui-btn').innerText = t.btn;
+            document.getElementById('ui-result-title').innerText = t.resultTitle;
+            document.getElementById('lang-text').innerText = t.langText;
+            document.getElementById('lang-icon').innerText = t.langIcon;
+            
+            const d1 = document.getElementById('date1').value;
+            const d2 = document.getElementById('date2').value;
+            if(d1 && d2) calculateJodoh();
+        }
+
+        function getWeton(dateStr) {
+            const date = new Date(dateStr);
+            const anchorDate = new Date(1900, 0, 1);
+            date.setHours(0,0,0,0);
+            anchorDate.setHours(0,0,0,0);
+            const diffDays = Math.round((date - anchorDate) / (24 * 60 * 60 * 1000));
+            
+            let pasaranIndex = (1 + diffDays) % 5;
+            if (pasaranIndex < 0) pasaranIndex += 5;
+            
+            const dayIndex = date.getDay();
+            const dayVal = dayValues[dayIndex];
+            const pasaranName = pasaranNames[pasaranIndex];
+            const pasaranVal = pasaranValues[pasaranName];
+            
+            return {
+                dayNameId: idDayNames[dayIndex],
+                dayNameEn: enDayNames[dayIndex],
+                pasaran: pasaranName,
+                neptu: dayVal + pasaranVal,
+                fullId: `${idDayNames[dayIndex]} ${pasaranName}`,
+                fullEn: `${enDayNames[dayIndex]} ${pasaranName}`
+            };
+        }
+
+        function calculateJodoh() {
+            const d1 = document.getElementById('date1').value;
+            const d2 = document.getElementById('date2').value;
+            const t = translations[currentLang];
+
+            if(!d1 || !d2) return alert(t.alert);
+
+            const w1 = getWeton(d1);
+            const w2 = getWeton(d2);
+            
+            const totalNeptu = w1.neptu + w2.neptu;
+            // Logic: (Total - 1) % 8 + 1 -> Maps to 1..8
+            // Example: Total 20 -> (19 % 8) + 1 = 3 + 1 = 4 (Topo)
+            // Wait, common logic is simpler: Just Total % 8? 
+            // Let's use standard table mapping:
+            // 36-Pegat, 35-Pesthi... 
+            // Logic formula: (Total % 8). If 0 -> 8.
+            let remainder = totalNeptu % 8;
+            if (remainder === 0) remainder = 8;
+
+            const result = jodohMeanings[remainder];
+
+            // Render
+            document.getElementById('outcomeName').innerText = result.name;
+            document.getElementById('outcomeDesc').innerText = currentLang === 'id' ? result.id : result.en;
+            document.getElementById('totalNeptu').innerText = `Total Neptu: ${w1.neptu} + ${w2.neptu} = ${totalNeptu}`;
+            
+            // Detail names
+            document.getElementById('detail1').innerText = currentLang === 'id' ? w1.fullId : w1.fullEn;
+            document.getElementById('detail2').innerText = currentLang === 'id' ? w2.fullId : w2.fullEn;
+
+            const resDiv = document.getElementById('result');
+            resDiv.classList.remove('hidden');
+            resDiv.classList.remove('fade-in');
+            void resDiv.offsetWidth;
+            resDiv.classList.add('fade-in');
+        }
+    </script>
+</body>
+</html>
