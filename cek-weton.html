@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Cek Weton Jawa Online Akurat - Watak & Hari Keberuntungan</title>
+    <meta name="description" content="Aplikasi Cek Weton Jawa Online paling akurat. Hitung neptu, pasaran, dan watak kepribadian berdasarkan tanggal lahir menurut kitab Primbon kuno.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F9FAFB; }</style>
+
+    <script src="assets/js/global.js" defer></script>
+    <script src="assets/js/data.js" defer></script>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <div id="global-ad-top"></div>
+
+    <div id="global-navbar"></div>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Cek Weton Jawa Online</h1>
+                    <p class="text-gray-500 text-sm">Masukkan tanggal lahir untuk mengetahui Weton, Neptu & Watak Anda.</p>
+                </div>
+
+                <div class="max-w-md mx-auto space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Lahir (Masehi)</label>
+                        <input type="date" id="inputDate" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition font-medium">
+                    </div>
+
+                    <button onclick="calculateWeton()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-green-200 transform active:scale-95">
+                        Cek Weton Sekarang
+                    </button>
+                </div>
+
+                <div class="mt-8 flex justify-center">
+                    <div class="ad-placeholder w-[300px] h-[250px]">Google AdSense - Rect</div>
+                </div>
+
+                <div id="result" class="hidden mt-8 fade-in">
+                    <div class="relative bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100 text-center">
+                        <p class="text-xs font-bold text-green-600 uppercase tracking-wider mt-2">Hasil Pengecekan</p>
+                        
+                        <h2 id="wetonName" class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">--</h2>
+                        <div class="inline-block bg-white px-3 py-1 rounded-full border border-green-200 shadow-sm mb-4">
+                            <p id="neptuValue" class="text-sm font-bold text-green-700">Neptu: --</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-xl border border-green-100 shadow-sm text-left mb-4">
+                            <h3 class="text-sm font-bold text-green-800 flex items-center gap-2 mb-2">
+                                <span>🔮</span> Watak & Karakter
+                            </h3>
+                            <p id="watakContent" class="text-gray-600 text-sm leading-relaxed italic">--</p>
+                        </div>
+
+                        <div class="space-y-2 text-sm bg-white/60 p-4 rounded-xl text-left">
+                            <div class="flex justify-between border-b border-gray-200 pb-2">
+                                <span class="text-gray-500">Hari Masehi</span>
+                                <span id="dayDetail" class="font-semibold text-gray-800">--</span>
+                            </div>
+                            <div class="flex justify-between pt-2">
+                                <span class="text-gray-500">Pasaran Jawa</span>
+                                <span id="pasaranDetail" class="font-semibold text-gray-800">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="global-suggestions"></div>
+
+            <article class="prose prose-sm md:prose-base max-w-none bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold text-gray-800">Apa itu Weton Jawa?</h2>
+                <p>
+                    Weton adalah sistem penanggalan tradisional masyarakat Jawa yang menggabungkan hari dalam sepekan (Senin, Selasa, dst) dengan lima hari pasaran (Legi, Pahing, Pon, Wage, Kliwon). Kombinasi ini menghasilkan siklus 35 hari yang disebut <em>selapan</em>.
+                </p>
+                <p>
+                    Dalam budaya Jawa, Weton bukan sekadar penanda hari lahir, melainkan "kode genetik" spiritual yang dipercaya memengaruhi:
+                </p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Watak & Karakter:</strong> Sifat bawaan seseorang sejak lahir.</li>
+                    <li><strong>Rezeki:</strong> Potensi kesuksesan dan arah mencari nafkah.</li>
+                    <li><strong>Jodoh:</strong> Tingkat kecocokan dengan pasangan (dihitung melalui Neptu).</li>
+                </ul>
+
+                <h3 class="text-lg font-bold mt-6">Cara Menghitung Neptu Weton</h3>
+                <p>
+                    Setiap hari dan pasaran memiliki nilai angka yang disebut <strong>Neptu</strong>. Penjumlahan kedua nilai ini menjadi dasar ramalan Primbon. Berikut tabel nilainya:
+                </p>
+                <div class="overflow-x-auto my-4">
+                    <table class="min-w-full text-sm border-collapse border border-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="border p-2">Hari</th>
+                                <th class="border p-2">Nilai</th>
+                                <th class="border p-2">Pasaran</th>
+                                <th class="border p-2">Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Minggu</td><td>5</td><td>Legi</td><td>5</td></tr>
+                            <tr><td>Senin</td><td>4</td><td>Pahing</td><td>9</td></tr>
+                            <tr><td>Selasa</td><td>3</td><td>Pon</td><td>7</td></tr>
+                            <tr><td>Rabu</td><td>7</td><td>Wage</td><td>4</td></tr>
+                            <tr><td>Kamis</td><td>8</td><td>Kliwon</td><td>8</td></tr>
+                            <tr><td>Jumat</td><td>6</td><td></td><td></td></tr>
+                            <tr><td>Sabtu</td><td>9</td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    Contoh: Jika Anda lahir pada <strong>Jumat Kliwon</strong>, maka Neptu Anda adalah 6 (Jumat) + 8 (Kliwon) = <strong>14</strong>. Gunakan alat di atas untuk perhitungan otomatis yang akurat.
+                </p>
+            </article>
+
+            <div class="flex justify-center pt-4">
+                <div class="ad-placeholder w-[728px] h-[90px] hidden md:flex">Bottom Banner</div>
+            </div>
+        </div>
+
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="sticky top-24">
+                <div class="ad-placeholder w-[300px] h-[600px] mx-auto">Sticky Sidebar Ad</div>
+            </div>
+        </aside>
+
+    </main>
+
+    <div id="global-footer"></div>
+
+    <script>
+		function calculateWeton() {
+			const dateStr = document.getElementById('inputDate').value;
+			if (!dateStr) return alert("Silakan pilih tanggal lahir!");
+
+			const date = new Date(dateStr);
+			const dayIndex = date.getDay();
+			const dayName = CONSTANTS.dayNames[dayIndex]; // Lấy từ file data.js
+			const dayVal = CONSTANTS.dayValues[dayIndex]; // Lấy từ file data.js
+
+			// Logic Pasaran
+			const anchorDate = new Date(1900, 0, 1);
+			date.setHours(0,0,0,0);
+			anchorDate.setHours(0,0,0,0);
+			const oneDay = 24 * 60 * 60 * 1000;
+			const diffDays = Math.round((date - anchorDate) / oneDay);
+			
+			let pasaranIndex = (1 + diffDays) % 5;
+			if (pasaranIndex < 0) pasaranIndex += 5;
+			
+			const pasaranName = CONSTANTS.pasaranNames[pasaranIndex]; // Lấy từ file data.js
+			const pasaranVal = CONSTANTS.pasaranValues[pasaranName];  // Lấy từ file data.js
+			const totalNeptu = dayVal + pasaranVal;
+			const fullWeton = `${dayName} ${pasaranName}`;
+
+			// Render
+			document.getElementById('wetonName').innerText = fullWeton;
+			document.getElementById('neptuValue').innerText = `Total Neptu: ${totalNeptu}`;
+			
+			// TRA CỨU TỪ FILE DATA.JS (WETON_DATA)
+			const watakInfo = WETON_DATA[fullWeton]; 
+			const watakText = watakInfo ? watakInfo.id : "Sifat umum: " + fullWeton + " memiliki karakter unik.";
+			document.getElementById('watakContent').innerText = watakText;
+
+			document.getElementById('dayDetail').innerText = `${dayName} (${dayVal})`;
+			document.getElementById('pasaranDetail').innerText = `${pasaranName} (${pasaranVal})`;
+
+			const resDiv = document.getElementById('result');
+			resDiv.classList.remove('hidden');
+			resDiv.classList.add('fade-in');
+		}
+    </script>
+</body>
+</html>

@@ -3,331 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Weton Jawa Online - Accurate Javanese Calculator</title>
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8442887450309048"
-     crossorigin="anonymous"></script>
-    <meta name="description" content="Aplikasi Cek Weton Jawa Online Akurat. Hitung hari pasaran dan neptu berdasarkan tanggal lahir.">
+    
+    <title>CekHarian - Portal Primbon Jawa, Weton & Tools Kehidupan Online</title>
+    <meta name="description" content="Kumpulan alat bantu online lengkap: Cek Weton Jawa, Ramalan Jodoh, Arti Nama, dan Kalkulator Kehidupan sehari-hari. Gratis, Cepat, dan Akurat.">
+    <meta name="keywords" content="cek weton, primbon jawa, cek jodoh, kalkulator online, tools">
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F3F4F6; }
-        .hidden { display: none; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Class giả lập khung quảng cáo để bạn dễ hình dung */
-        .ad-placeholder {
-            background-color: #e5e7eb;
-            border: 2px dashed #9ca3af;
-            color: #6b7280;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin: 0 auto;
-        }
+        .tool-card:hover { transform: translateY(-5px); }
     </style>
+
+    <script src="assets/js/global.js" defer></script>
 </head>
-<body class="flex flex-col min-h-screen text-gray-800">
+<body class="flex flex-col min-h-screen">
 
-    <nav class="w-full bg-white shadow-sm p-4 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="font-bold text-xl text-green-700 tracking-tight">Weton<span class="text-gray-800">Ku</span></div>
-            <button onclick="toggleLanguage()" class="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full hover:bg-gray-200 transition text-sm font-semibold">
-                <span id="lang-icon">🇬🇧</span>
-                <span id="lang-text">English</span>
-            </button>
-        </div>
-    </nav>
+    <div id="global-ad-top"></div>
 
-    <div class="w-full bg-white border-b border-gray-200 py-4">
-        <div class="max-w-6xl mx-auto px-4 text-center">
-            <div class="ad-placeholder w-full max-w-[728px] h-[90px] hidden md:flex">
-                Google AdSense - Leaderboard (728x90)
-            </div>
-            <div class="ad-placeholder w-[320px] h-[50px] md:hidden flex">
-                Mobile Banner (320x50)
-            </div>
-        </div>
-    </div>
+    <div id="global-navbar"></div>
 
-    <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:py-10">
         
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100">
-                
-                <div class="text-center mb-8">
-                    <h1 id="ui-title" class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Cek Weton Jawa</h1>
-                    <p id="ui-desc" class="text-gray-500 text-sm">Masukkan tanggal lahir untuk mengetahui Weton & Neptu Anda.</p>
-                </div>
-
-                <div class="space-y-4 max-w-md mx-auto">
-                    <div>
-                        <label id="ui-label-date" for="inputDate" class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Lahir</label>
-                        <input type="date" id="inputDate" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-gray-700 font-medium">
-                    </div>
-
-                    <button onclick="calculateWeton()" id="ui-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-green-200 transform active:scale-95">
-                        Cek Weton Sekarang
-                    </button>
-                </div>
-
-                <div class="mt-8 flex justify-center">
-                    <div class="ad-placeholder w-[300px] h-[250px]">
-                        Google AdSense - Rect (300x250)
-                    </div>
-                </div>
-
-				<div id="result" class="mt-8 hidden fade-in max-w-md mx-auto">
-					<div class="relative bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100 text-center">
-						<div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white p-2 rounded-full shadow-sm border border-gray-100">
-							<span class="text-2xl">💮</span>
-						</div>
-						
-						<p id="ui-result-title" class="text-xs font-bold text-green-600 uppercase tracking-wider mt-2">Hasil Pengecekan</p>
-						
-						<h2 id="wetonName" class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">--</h2>
-						<div class="inline-block bg-white px-3 py-1 rounded-full border border-green-200 shadow-sm mb-4">
-							<p id="neptuValue" class="text-sm font-bold text-green-700">Neptu: --</p>
-						</div>
-
-						<div class="bg-white p-5 rounded-xl border border-green-100 shadow-sm text-left mb-4">
-							<h3 class="text-sm font-bold text-green-800 flex items-center gap-2 mb-2">
-								<span>🔮</span> <span id="ui-watak-title">Watak & Karakter</span>
-							</h3>
-							<p id="watakContent" class="text-gray-600 text-sm leading-relaxed italic">
-								-- Loading interpretation --
-							</p>
-						</div>
-
-						<div class="space-y-2 text-sm bg-white/60 p-4 rounded-xl text-left">
-							<div class="flex justify-between items-center border-b border-gray-200 pb-2">
-								<span id="ui-detail-day" class="text-gray-500">Hari Masehi</span>
-								<span id="dayDetail" class="font-semibold text-gray-800">--</span>
-							</div>
-							<div class="flex justify-between items-center border-b border-gray-200 pb-2 pt-2">
-								<span id="ui-detail-pasaran" class="text-gray-500">Pasaran Jawa</span>
-								<span id="pasaranDetail" class="font-semibold text-gray-800">--</span>
-							</div>
-							<div class="flex justify-between items-center pt-2">
-								<span id="ui-detail-calc" class="text-gray-500">Rumus Neptu</span>
-								<span id="neptuCalc" class="font-mono font-medium text-gray-600">--</span>
-							</div>
-						</div>
-					</div>
-				</div>
-            </div>
-
-            <div class="prose prose-sm text-gray-600 max-w-none">
-                <h3 class="text-lg font-bold text-gray-800">Apa itu Weton Jawa?</h3>
-                <p>Weton adalah penanggalan jawa yang berasal dari gabungan hari dalam seminggu (Senin, Selasa, dll) dengan lima hari pasaran jawa (Legi, Pahing, Pon, Wage, Kliwon).</p>
-            </div>
+        <div class="text-center mb-12">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                Selamat Datang di <span class="text-green-600">CekHarian</span>
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Portal alat bantu kehidupan sehari-hari dan pelestarian budaya. Temukan jawaban untuk pertanyaanmu di sini.
+            </p>
         </div>
 
-        <aside class="lg:col-span-1 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-bold text-gray-700 mb-2">Tools Populer</h3>
-                <ul class="text-sm space-y-2 text-green-600">
-                    <li>• <a href="cek-jodoh.html" class="hover:underline text-pink-600 font-bold">❤️ Cek Jodoh (Love Compatibility)</a></li>
-                    <li>• <a href="#" class="hover:underline">Arti Mimpi (Sổ mơ)</a></li>
-                </ul>
-            </div>
-
-            <div class="sticky top-24">
-                <div class="ad-placeholder w-full max-w-[300px] h-[600px] mx-auto">
-                    Google AdSense - Half Page (300x600)
+            <a href="cek-weton.html" class="tool-card group block bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-4xl bg-green-50 p-3 rounded-xl">📅</span>
+                    <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">POPULER</span>
                 </div>
+                <h3 class="text-xl font-bold text-gray-800 group-hover:text-green-600 transition">Cek Weton Jawa</h3>
+                <p class="text-gray-500 text-sm mt-2">Hitung hari pasaran, neptu, dan watak kepribadian berdasarkan tanggal lahir Anda.</p>
+            </a>
+
+            <a href="cek-jodoh.html" class="tool-card group block bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-4xl bg-pink-50 p-3 rounded-xl">❤️</span>
+                    <span class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-1 rounded-full">HOT</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 group-hover:text-pink-600 transition">Cek Kecocokan Jodoh</h3>
+                <p class="text-gray-500 text-sm mt-2">Prediksi keserasian hubungan asmara dan pernikahan menurut perhitungan Primbon kuno.</p>
+            </a>
+
+            <a href="game-jodoh.html" class="tool-card group block bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-4xl bg-purple-50 p-3 rounded-xl">🎮</span>
+                    <span class="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded-full">NEW</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 group-hover:text-purple-600 transition">Game "Flappy Love"</h3>
+                <p class="text-gray-500 text-sm mt-2">Uji kekompakan pasanganmu dengan game interaktif real-time. Bisakah kalian terbang bersama?</p>
+            </a>
+
+            <div class="block bg-gray-50 rounded-2xl p-6 border border-dashed border-gray-300 opacity-70">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-4xl grayscale">📖</span>
+                    <span class="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded-full">COMING SOON</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-400">Arti Nama (Name Meaning)</h3>
+                <p class="text-gray-400 text-sm mt-2">Cek makna dan doa di balik namamu. Segera hadir.</p>
+            </div>
+            
+             <div class="block bg-gray-50 rounded-2xl p-6 border border-dashed border-gray-300 opacity-70">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-4xl grayscale">🌙</span>
+                    <span class="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded-full">COMING SOON</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-400">Tafsir Mimpi (Dream)</h3>
+                <p class="text-gray-400 text-sm mt-2">Kamus lengkap arti mimpi dan pertanda alam. Segera hadir.</p>
             </div>
 
-        </aside>
+             <div class="flex items-center justify-center bg-white rounded-2xl border border-gray-100 p-4">
+                <div class="ad-placeholder w-[300px] h-[250px]">Google AdSense - Rect</div>
+            </div>
+
+        </div>
+
+        <article class="prose prose-sm md:prose-base max-w-none bg-white p-8 rounded-3xl shadow-sm border border-gray-100 mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Tentang CekHarian.com</h2>
+            <p>
+                <strong>CekHarian</strong> adalah platform digital modern yang didedikasikan untuk melestarikan kearifan lokal Nusantara, khususnya budaya Jawa, melalui teknologi yang mudah diakses. Kami menggabungkan perhitungan kuno (Primbon) dengan algoritma komputer yang presisi.
+            </p>
+            <p>
+                Di sini, Anda tidak perlu lagi membuka buku tebal atau menghitung manual. Cukup masukkan data, dan sistem kami akan memberikan wawasan tentang:
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>Weton & Karakter:</strong> Memahami potensi diri berdasarkan hari kelahiran.</li>
+                <li><strong>Harmoni Hubungan:</strong> Panduan untuk saling memahami antar pasangan.</li>
+                <li><strong>Hiburan Interaktif:</strong> Game yang menguji koneksi emosional secara real-time.</li>
+            </ul>
+            <p class="mt-4 text-sm text-gray-500 italic">
+                *Penafian: Seluruh konten di situs ini bertujuan untuk pelestarian budaya dan hiburan. Keputusan hidup tetap ada di tangan Anda.
+            </p>
+        </article>
+
     </main>
 
-    <div class="w-full bg-white border-t border-gray-200 py-6 mt-8">
-         <div class="max-w-6xl mx-auto flex justify-center">
-            <div class="ad-placeholder w-full max-w-[728px] h-[90px]">
-                Footer Banner (728x90)
-            </div>
-         </div>
-    </div>
+    <div id="global-footer"></div>
 
-    <footer class="text-center p-4 text-xs text-gray-400 bg-gray-50">
-        &copy; <span id="year"></span> WetonKu. All rights reserved.
-    </footer>
-
-	<script>
-		document.getElementById('year').innerText = new Date().getFullYear();
-		let currentLang = 'id'; 
-
-		// --- DỮ LIỆU 35 WETON (DATABASE) ---
-		// Key: "TênNgàyIndo TênPasaranIndo" (Ví dụ: Senin Legi)
-		const wetonData = {
-			// MINGGU (CHỦ NHẬT)
-			"Minggu Legi": { id: "Sumur Sinaba: Orang yang bijaksana, wawasannya luas, dan sering dicari orang untuk dimintai nasihat.", en: "Sumur Sinaba: Wise person with broad knowledge, often sought after for advice." },
-			"Minggu Pahing": { id: "Lakuning Rembulan: Mempesona dan menenteramkan hati orang lain, tetapi cenderung pendiam.", en: "Lakuning Rembulan: Charming and soothing to others, but tends to be quiet." },
-			"Minggu Pon": { id: "Bumi Kapetak: Pekerja keras, tahan banting, tetapi terkadang keras kepala.", en: "Bumi Kapetak: Hard worker, resilient, but sometimes stubborn." },
-			"Minggu Wage": { id: "Lakuning Angin: Menyejukkan tetapi tidak bisa menetap, sering berpindah-pindah keinginan.", en: "Lakuning Angin: Soothing but inconsistent, desires often change." },
-			"Minggu Kliwon": { id: "Lakuning Lintang: Pendiam, suka menyendiri, tetapi memiliki hati yang tulus.", en: "Lakuning Lintang: Quiet, likes solitude, but has a sincere heart." },
-
-			// SENIN (THỨ 2)
-			"Senin Legi": { id: "Lakuning Angin: Ceria dan suka bergaul, namun pendiriannya mudah goyah.", en: "Lakuning Angin: Cheerful and sociable, but easily swayed opinion." },
-			"Senin Pahing": { id: "Lakuning Lintang: Suka menyampaikan pendapat, bercita-cita tinggi, dan pekerja keras.", en: "Lakuning Lintang: Likes to express opinions, high aspirations, hard worker." },
-			"Senin Pon": { id: "Demang Kandhuwuran: Angkuh dan keras hati, namun sangat tangguh dalam menghadapi masalah.", en: "Demang Kandhuwuran: Arrogant and tough-hearted, but very resilient in facing problems." },
-			"Senin Wage": { id: "Lakuning Geni: Mudah marah tetapi semangatnya membara, cepat reda jika ditenangkan.", en: "Lakuning Geni: Easily angry but fiery spirit, calms down quickly." },
-			"Senin Kliwon": { id: "Macan Ketawan: Waspada, resah, namun sangat sayang terhadap keluarganya.", en: "Macan Ketawan: Alert, anxious, but very loving towards family." },
-
-			// SELASA (THỨ 3)
-			"Selasa Legi": { id: "Lakuning Geni: Memiliki jiwa pemimpin, tegas, tetapi terkadang mudah tersinggung.", en: "Lakuning Geni: Leader spirit, firm, but sometimes easily offended." },
-			"Selasa Pahing": { id: "Aras Kembang: Mempesona dan berwibawa, namun sering kali memendam masalah sendiri.", en: "Aras Kembang: Charming and authoritative, but often hides problems." },
-			"Selasa Pon": { id: "Sanggar Waringin: Teduh dan melindungi, hatinya sangat teduh bagi orang sekitar.", en: "Sanggar Waringin: Shady and protective, very calming heart for others." },
-			"Selasa Wage": { id: "Lakuning Bumi: Sabar, amanah, dan mau mengalah demi kebaikan.", en: "Lakuning Bumi: Patient, trustworthy, and willing to yield for good." },
-			"Selasa Kliwon": { id: "Anggoro Kasih: Beruntung dalam hidup, pandai bicara, dan setia.", en: "Anggoro Kasih: Lucky in life, good talker, and loyal." },
-
-			// RABU (THỨ 4)
-			"Rabu Legi": { id: "Padangon Jagur: Waspada, adil, dan berpegang teguh pada prinsip.", en: "Padangon Jagur: Alert, fair, and sticks to principles." },
-			"Rabu Pahing": { id: "Lakuning Banyu: Tenang seperti air, mudah beradaptasi, dan murah rezeki.", en: "Lakuning Banyu: Calm like water, adaptable, and easily attracts fortune." },
-			"Rabu Pon": { id: "Lakuning Rembulan: Menerangi hati orang lain, santun, dan berbudi luhur.", en: "Lakuning Rembulan: Illuminates others' hearts, polite, and virtuous." },
-			"Rabu Wage": { id: "Pancasuda Sumur Sinaba: Berwawasan luas dan hemat, namun terkadang sedikit kaku.", en: "Pancasuda Sumur Sinaba: Broad knowledge and thrifty, but sometimes a bit stiff." },
-			"Rabu Kliwon": { id: "Lakuning Srengenge: Memberi kehangatan, bicara apa adanya, dan bertanggung jawab.", en: "Lakuning Srengenge: Gives warmth, speaks frankly, and responsible." },
-
-			// KAMIS (THỨ 5)
-			"Kamis Legi": { id: "Lakuning Lintang: Mandiri, berkarisma, dan memiliki etos kerja tinggi.", en: "Lakuning Lintang: Independent, charismatic, and high work ethic." },
-			"Kamis Pahing": { id: "Lakuning Gunung: Teguh pendirian, cerdas, tetapi terkadang tidak tegaan.", en: "Lakuning Gunung: Firm stance, intelligent, but sometimes too soft-hearted." },
-			"Kamis Pon": { id: "Lakuning Srengenge: Cerdas, cekatan, dan memiliki jiwa pengayom.", en: "Lakuning Srengenge: Intelligent, agile, and protective spirit." },
-			"Kamis Wage": { id: "Lakuning Kembang: Mempesona dan menarik perhatian, suka kemewahan.", en: "Lakuning Kembang: Charming and attention-grabbing, likes luxury." },
-			"Kamis Kliwon": { id: "Lakuning Banyu: Periang, pandai bergaul, dan murah hati.", en: "Lakuning Banyu: Cheerful, sociable, and generous." },
-
-			// JUMAT (THỨ 6)
-			"Jumat Legi": { id: "Sanggar Waringin: Dapat diandalkan, jujur, dan suka menolong sesama.", en: "Sanggar Waringin: Reliable, honest, and likes to help others." },
-			"Jumat Pahing": { id: "Lakuning Srengenge: Berwibawa, mandiri, dan disegani banyak orang.", en: "Lakuning Srengenge: Authoritative, independent, and respected by many." },
-			"Jumat Pon": { id: "Lakuning Lintang: Penyendiri, tutur katanya halus, dan berjiwa seni.", en: "Lakuning Lintang: Loner, soft-spoken, and artistic soul." },
-			"Jumat Wage": { id: "Aras Pepet: Pendiam, memiliki aura misterius, dan setia.", en: "Aras Pepet: Quiet, mysterious aura, and loyal." },
-			"Jumat Kliwon": { id: "Lakuning Rembulan: Memiliki daya pikat tinggi, romantis, dan penuh kasih.", en: "Lakuning Rembulan: High charm, romantic, and loving." },
-
-			// SABTU (THỨ 7)
-			"Sabtu Legi": { id: "Lakuning Rembulan: Menyenangkan, pandai mengatur keuangan, dan stabil.", en: "Lakuning Rembulan: Pleasant, good at managing money, and stable." },
-			"Sabtu Pahing": { id: "Lakuning Geni: Ambisius, mudah emosi, tetapi cepat memaafkan.", en: "Lakuning Geni: Ambitious, easily emotional, but forgives quickly." },
-			"Sabtu Pon": { id: "Lakuning Banyu: Tenang, pemaaf, dan memiliki rezeki yang mengalir.", en: "Lakuning Banyu: Calm, forgiving, and fortune flows." },
-			"Sabtu Wage": { id: "Lakuning Lintang: Introvert, teguh pada pendirian, dan tidak suka keramaian.", en: "Lakuning Lintang: Introvert, firm stance, and dislikes crowds." },
-			"Sabtu Kliwon": { id: "Lakuning Bumi: Mengalah, sabar, dan sangat peduli pada orang lain.", en: "Lakuning Bumi: Yielding, patient, and cares deeply for others." }
-		};
-
-		// --- CONFIG & TRANSLATIONS ---
-		const translations = {
-			id: {
-				title: "Cek Weton Jawa",
-				desc: "Masukkan tanggal lahir untuk mengetahui Weton & Neptu Anda.",
-				labelDate: "Tanggal Lahir",
-				btn: "Cek Weton Sekarang",
-				resultTitle: "Hasil Pengecekan",
-				watakTitle: "Watak & Karakter",
-				detailDay: "Hari Masehi",
-				detailPasaran: "Pasaran Jawa",
-				detailCalc: "Rumus Neptu",
-				alert: "Silakan pilih tanggal lahir!",
-				dayNames: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
-				langBtnText: "English",
-				langBtnIcon: "🇬🇧"
-			},
-			en: {
-				title: "Javanese Weton Checker",
-				desc: "Enter birth date to discover your Weton & Neptu.",
-				labelDate: "Date of Birth",
-				btn: "Check Weton Now",
-				resultTitle: "Calculation Result",
-				watakTitle: "Character & Traits",
-				detailDay: "Day of Week",
-				detailPasaran: "Javanese Market Day",
-				detailCalc: "Neptu Formula",
-				alert: "Please select a date!",
-				dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-				langBtnText: "Indonesia",
-				langBtnIcon: "🇮🇩"
-			}
-		};
-
-		const dayValues = [5, 4, 3, 7, 8, 6, 9]; 
-		const pasaranNames = ['Legi', 'Pahing', 'Pon', 'Wage', 'Kliwon'];
-		const pasaranValues = {'Legi': 5, 'Pahing': 9, 'Pon': 7, 'Wage': 4, 'Kliwon': 8};
-		// Mảng tên ngày cố định dùng để tra cứu key trong wetonData (luôn là tiếng Indo)
-		const idDayNamesFixed = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-
-		function toggleLanguage() {
-			currentLang = currentLang === 'id' ? 'en' : 'id';
-			updateUI();
-			const dateVal = document.getElementById('inputDate').value;
-			if (dateVal) calculateWeton();
-		}
-
-		function updateUI() {
-			const t = translations[currentLang];
-			document.getElementById('ui-title').innerText = t.title;
-			document.getElementById('ui-desc').innerText = t.desc;
-			document.getElementById('ui-label-date').innerText = t.labelDate;
-			document.getElementById('ui-btn').innerText = t.btn;
-			document.getElementById('ui-result-title').innerText = t.resultTitle;
-			document.getElementById('ui-watak-title').innerText = t.watakTitle; // New
-			document.getElementById('ui-detail-day').innerText = t.detailDay;
-			document.getElementById('ui-detail-pasaran').innerText = t.detailPasaran;
-			document.getElementById('ui-detail-calc').innerText = t.detailCalc;
-			document.getElementById('lang-text').innerText = t.langBtnText;
-			document.getElementById('lang-icon').innerText = t.langBtnIcon;
-		}
-
-		function calculateWeton() {
-			const dateStr = document.getElementById('inputDate').value;
-			const t = translations[currentLang];
-			if (!dateStr) return alert(t.alert);
-
-			const date = new Date(dateStr);
-			const dayIndex = date.getDay();
-			const dayName = t.dayNames[dayIndex]; // Tên hiển thị (theo ngôn ngữ)
-			const dayVal = dayValues[dayIndex];
-
-			// Logic Pasaran
-			const anchorDate = new Date(1900, 0, 1);
-			date.setHours(0,0,0,0);
-			anchorDate.setHours(0,0,0,0);
-			const oneDay = 24 * 60 * 60 * 1000;
-			const diffDays = Math.round((date - anchorDate) / oneDay);
-			
-			let pasaranIndex = (1 + diffDays) % 5;
-			if (pasaranIndex < 0) pasaranIndex += 5;
-			
-			const pasaranName = pasaranNames[pasaranIndex];
-			const pasaranVal = pasaranValues[pasaranName];
-			const totalNeptu = dayVal + pasaranVal;
-
-			// TẠO KEY ĐỂ TRA CỨU DỮ LIỆU WATAK (Luôn dùng tiếng Indo)
-			const idDayName = idDayNamesFixed[dayIndex]; // Luôn là Minggu, Senin...
-			const lookupKey = `${idDayName} ${pasaranName}`; // Ví dụ: "Senin Pahing"
-			const watakInfo = wetonData[lookupKey];
-
-			// RENDER
-			document.getElementById('wetonName').innerText = `${dayName} ${pasaranName}`;
-			document.getElementById('neptuValue').innerText = `Total Neptu: ${totalNeptu}`;
-			
-			// Hiển thị Watak theo ngôn ngữ
-			if (watakInfo) {
-				document.getElementById('watakContent').innerText = currentLang === 'id' ? watakInfo.id : watakInfo.en;
-			} else {
-				document.getElementById('watakContent').innerText = "Data not found.";
-			}
-
-			document.getElementById('dayDetail').innerText = `${dayName} (${dayVal})`;
-			document.getElementById('pasaranDetail').innerText = `${pasaranName} (${pasaranVal})`;
-			document.getElementById('neptuCalc').innerText = `${dayVal} + ${pasaranVal} = ${totalNeptu}`;
-
-			const resultEl = document.getElementById('result');
-			resultEl.classList.remove('hidden');
-			resultEl.classList.remove('fade-in');
-			void resultEl.offsetWidth; 
-			resultEl.classList.add('fade-in');
-		}
-
-		updateUI();
-	</script>
 </body>
 </html>
