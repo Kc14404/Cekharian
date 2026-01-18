@@ -121,19 +121,19 @@ function renderSuggestions() {
 // ============================================================
 function renderSocialFeed() {
     const footer = document.getElementById("global-footer");
+    const data = window.SOCIAL_POOL; // Lấy từ window
     
-    // Kiểm tra xem File Data đã load chưa
-    if (typeof SOCIAL_POOL === 'undefined') {
-        console.warn("data-videos.js belum dimuat!");
+    if (!data) {
+        console.error("❌ Lỗi: Không tìm thấy data-videos.js! Kiểm tra lại file HTML.");
         return; 
     }
     if (!footer) return;
 
-    // 1. Randomize: Lấy 3 TikTok + 3 YouTube từ Database
-    // Sử dụng optional chaining (?.) đề phòng mảng rỗng
-    const randomTikTok = [...(SOCIAL_POOL.tiktok || [])].sort(() => 0.5 - Math.random()).slice(0, 3);
-    const randomYT = [...(SOCIAL_POOL.youtube || [])].sort(() => 0.5 - Math.random()).slice(0, 3);
-    
+    // 1. Randomize
+    const randomTikTok = [...(data.tiktok || [])].sort(() => 0.5 - Math.random()).slice(0, 3);
+    const randomYT = [...(data.youtube || [])].sort(() => 0.5 - Math.random()).slice(0, 3);
+
+    // ... (Phần code bên dưới giữ nguyên không cần sửa)    
     // 2. Render TikTok Cards
     const tiktokCards = randomTikTok.map(id => `
         <div class="snap-center shrink-0 w-[300px] bg-black rounded-xl overflow-hidden border border-gray-800 flex items-center justify-center relative shadow-lg">

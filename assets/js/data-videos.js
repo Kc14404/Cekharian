@@ -3,7 +3,7 @@
 // Bạn chỉ cần cập nhật ID video vào đây.
 // =================================================================
 
-const SOCIAL_POOL = {
+window.SOCIAL_POOL = {
     // 1. List ID Video TikTok 
     // Cách lấy ID: Link video là tiktok.com/@user/video/72448375... -> ID là 72448375...
     tiktok: [
