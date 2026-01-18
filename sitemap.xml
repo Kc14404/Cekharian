@@ -2,12 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://cekharian.com/</loc>
-    <lastmod>2026-01-14</lastmod>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <url>
+    <loc>https://cekharian.com/cek-weton.html</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <url>
     <loc>https://cekharian.com/cek-jodoh.html</loc>
-    <lastmod>2026-01-14</lastmod>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cekharian.com/game-jodoh.html</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://cekharian.com/privacy.html</loc>
+    <lastmod>2026-01-18</lastmod>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://cekharian.com/disclaimer.html</loc>
+    <lastmod>2026-01-18</lastmod>
+    <priority>0.3</priority>
   </url>
 </urlset>
