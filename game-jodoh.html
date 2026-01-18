@@ -8,16 +8,29 @@
     <meta name="description" content="Mainkan game couple online 'Flappy Love'. Kontrol satu karakter berdua secara real-time untuk menguji seberapa cocok dan kompak hubungan kalian.">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F9FAFB; }
-        /* Game Specific Styles */
-        #game-wrapper { position: relative; width: 100%; height: 0; padding-bottom: 120%; /* Tỷ lệ khung dọc mobile */ background: #70c5ce; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F9FAFB; user-select: none; }
+        /* Game Wrapper */
+        #game-wrapper { position: relative; width: 100%; height: 0; padding-bottom: 120%; background: #70c5ce; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; z-index: 20; padding: 20px; }
-        .game-btn { background: #ff4757; border: none; padding: 12px 24px; color: white; font-weight: bold; border-radius: 50px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4); transition: transform 0.1s; }
-        .game-btn:active { transform: scale(0.95); }
+        
+        /* Overlays */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; z-index: 20; padding: 20px; transition: opacity 0.3s; }
+        
+        /* Buttons */
+        .game-btn { background: linear-gradient(to bottom, #ff4757, #ff6b81); border: none; padding: 14px 28px; color: white; font-weight: 800; border-radius: 50px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 0 #c41e3a; transition: transform 0.1s; text-transform: uppercase; letter-spacing: 1px; }
+        .game-btn:active { transform: translateY(4px); box-shadow: none; }
+        .game-btn.blue { background: linear-gradient(to bottom, #3b82f6, #60a5fa); box-shadow: 0 4px 0 #1d4ed8; }
+        .game-btn.green { background: linear-gradient(to bottom, #22c55e, #4ade80); box-shadow: 0 4px 0 #15803d; }
+        .game-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
+
         .hidden { display: none !important; }
+        
+        /* Animations */
+        @keyframes pulse-text { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .pulse { animation: pulse-text 1s infinite; }
+        .count-number { font-size: 8rem; font-weight: 900; text-shadow: 4px 4px 0 #000; color: #fbbf24; }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.js"></script>
@@ -29,7 +42,6 @@
 <body class="flex flex-col min-h-screen">
 
     <div id="global-ad-top"></div>
-
     <div id="global-navbar"></div>
 
     <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -38,53 +50,86 @@
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                 <div class="text-center mb-4">
                     <h1 class="text-2xl font-bold text-gray-900">🎮 Flappy Love</h1>
-                    <p class="text-gray-500 text-sm">Main berdua, satu hati. Uji kekompakan cinta kalian!</p>
+                    <p class="text-gray-500 text-sm">Sinkronisasi Hati & Jari (Đồng điệu trái tim & ngón tay)</p>
                 </div>
 
                 <div id="game-wrapper">
                     <canvas id="gameCanvas"></canvas>
                     
                     <div id="menu" class="overlay">
-                        <h2 class="text-3xl font-bold mb-2 text-pink-400">Ready?</h2>
-                        <p class="mb-6 text-sm">Tap layar bergantian agar burung tidak jatuh!</p>
+                        <h2 class="text-4xl font-extrabold mb-2 text-pink-400 drop-shadow-md">FLAPPY LOVE</h2>
+                        <p class="mb-8 text-sm opacity-90 max-w-xs">Game Co-op 2 Người. Tap màn hình để bay. Đừng để rơi!</p>
                         
-                        <div class="space-y-3 w-full max-w-xs">
-                            <button onclick="createRoom()" class="game-btn bg-green-500 w-full">Buat Room (Host)</button>
+                        <div class="space-y-4 w-full max-w-xs">
+                            <button onclick="createRoom()" class="game-btn green w-full">Buat Room (Host)</button>
                             <div class="flex gap-2 justify-center pt-2">
-                                <input type="text" id="roomInput" placeholder="KODE" class="p-2 rounded text-black text-center font-bold outline-none w-24 uppercase">
-                                <button onclick="joinRoom()" class="game-btn bg-blue-500 mt-0 py-2 px-4 text-sm">Join</button>
+                                <input type="text" id="roomInput" placeholder="KODE" class="p-3 rounded-xl text-black text-center font-bold outline-none w-28 uppercase border-2 border-gray-300 focus:border-blue-500">
+                                <button onclick="joinRoom()" class="game-btn blue mt-0 py-3 px-6 text-sm">Join</button>
                             </div>
                         </div>
                     </div>
 
                     <div id="waiting" class="overlay hidden">
-                        <h3 class="text-xl font-bold">Menunggu Pasangan...</h3>
-                        <p class="text-xs mt-2 text-gray-300">Share kode ini ke pasanganmu:</p>
-                        <div id="roomCodeDisplay" class="text-4xl font-mono font-bold text-yellow-400 my-4 tracking-widest bg-black/20 px-4 py-2 rounded">---</div>
-                        <button onclick="copyLink()" class="bg-white text-gray-800 px-4 py-2 rounded-full text-xs font-bold">📋 Copy Link</button>
+                        <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20 w-full max-w-sm">
+                            <h3 class="text-xl font-bold text-yellow-300">MENUNGGU PLAYER 2...</h3>
+                            <div class="my-6">
+                                <p class="text-xs text-gray-300 mb-1 uppercase tracking-widest">Kode Room Anda</p>
+                                <div id="roomCodeDisplay" class="text-5xl font-mono font-black text-white bg-black/30 py-4 rounded-lg select-all">---</div>
+                            </div>
+                            <button onclick="copyLink()" class="bg-white text-gray-900 px-6 py-2 rounded-full text-xs font-bold hover:bg-gray-200 transition">📋 Copy Link & Kode</button>
+                            
+                            <div class="mt-6 text-left text-xs text-gray-300 space-y-2 border-t border-white/10 pt-4">
+                                <p><strong>Cara Main:</strong></p>
+                                <p>1. Kirim kode ini ke pasangan.</p>
+                                <p>2. Tunggu pasangan masuk.</p>
+                                <p>3. Tekan "SIAP" bersamaan.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="readyCheck" class="overlay hidden">
+                        <h3 class="text-2xl font-bold mb-6">PLAYER 2 BERGABUNG!</h3>
+                        
+                        <div class="flex justify-center gap-8 mb-8 w-full">
+                            <div class="text-center">
+                                <div id="p1StatusIcon" class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center text-3xl mb-2 mx-auto border-4 border-gray-500">👤</div>
+                                <p class="font-bold text-sm">HOST</p>
+                            </div>
+                            <div class="text-center">
+                                <div id="p2StatusIcon" class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center text-3xl mb-2 mx-auto border-4 border-gray-500">👤</div>
+                                <p class="font-bold text-sm">PARTNER</p>
+                            </div>
+                        </div>
+
+                        <p id="readyStatusText" class="text-yellow-300 text-sm mb-6 animate-pulse">Menunggu kedua pemain siap...</p>
+                        
+                        <button id="btnReady" onclick="sendReady()" class="game-btn green w-48">SIAP (READY)</button>
+                    </div>
+
+                    <div id="countdownScreen" class="overlay hidden bg-black/90">
+                        <p class="text-sm font-bold text-gray-400 mb-4">GAME DIMULAI DALAM</p>
+                        <div id="countNum" class="count-number pulse">5</div>
+                        <p class="text-xs text-gray-500 mt-8">Siapkan jari Anda!</p>
                     </div>
 
                     <div id="gameOver" class="overlay hidden">
-                        <h2 class="text-3xl font-bold text-red-400">Game Over!</h2>
-                        <p class="text-sm mt-1">Skor Kalian:</p>
-                        <div class="text-6xl font-bold text-yellow-400 mb-4" id="finalScore">0</div>
+                        <h2 class="text-3xl font-bold text-red-400">GAME OVER</h2>
+                        <div class="text-6xl font-black text-white mb-2" id="finalScore">0</div>
+                        <p class="text-xs text-gray-400 mb-6">Skor Akhir</p>
                         
-                        <div id="fateResult" class="bg-white text-gray-800 p-4 rounded-xl text-xs text-left mb-4 w-11/12 max-w-sm">
+                        <div id="fateResult" class="bg-white text-gray-800 p-4 rounded-xl text-xs text-left mb-6 w-11/12 max-w-sm border-l-4 border-pink-500 shadow-lg">
                             --
                         </div>
 
-                        <button onclick="restartGame()" class="game-btn">Main Lagi (Replay)</button>
+                        <button onclick="restartGame()" class="game-btn blue">MAIN LAGI</button>
                     </div>
-                </div>
-                
-                <div class="mt-6 prose prose-sm max-w-none text-gray-600">
-                    <h3 class="font-bold text-gray-800">Cara Main:</h3>
-                    <ul class="list-disc pl-5 text-sm">
-                        <li>Salah satu orang tekan <strong>"Buat Room"</strong>.</li>
-                        <li>Bagikan <strong>Kode Room</strong> atau Link ke pasangan.</li>
-                        <li>Pasangan memasukkan kode lalu tekan <strong>"Join"</strong>.</li>
-                        <li>Saat burung terbang, <strong>Tap layar</strong> (atau Spasi) bergantian untuk menjaga keseimbangan.</li>
-                    </ul>
+
+                    <div id="gameHUD" class="absolute top-4 left-0 w-full px-4 flex justify-between items-start pointer-events-none hidden z-10">
+                        <div class="text-white font-black text-2xl drop-shadow-md">SCORE: <span id="hudScore">0</span></div>
+                        <div id="turnIndicator" class="bg-black/50 backdrop-blur px-4 py-2 rounded-full border border-white/20">
+                            <span id="turnText" class="text-xs font-bold text-white uppercase tracking-wider">Mulai...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,15 +139,12 @@
                 <div class="ad-placeholder w-[300px] h-[600px] mx-auto">Sticky Sidebar Ad</div>
             </div>
         </aside>
-
     </main>
 
     <div id="global-footer"></div>
 
     <script>
-        // -----------------------------------------------------------
-        // CẤU HÌNH FIREBASE CHÍNH THỨC (Đã cập nhật đúng chuẩn Web Tĩnh)
-        // -----------------------------------------------------------
+        // --- CONFIG FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyBFOqKhoj3Zb4wzuJILX_vQGr9OkdNLyZA",
             authDomain: "cekharian-game.firebaseapp.com",
@@ -114,112 +156,188 @@
             measurementId: "G-GLGVV79XBP"
         };
 
-        // Khởi tạo Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-            // Kích hoạt Analytics tích hợp (nếu cần)
-            if (firebase.analytics) {
-                firebase.analytics();
-            }
-        }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
-        // -----------------------------------------------------------
 
-
-        // Canvas & Context
+        // --- VARIABLES ---
         const wrapper = document.getElementById('game-wrapper');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-
-        // Game State
-        let gameState = 'MENU';
+        
+        // Game Logic
+        let gameState = 'MENU'; 
         let roomId = null;
-        let isHost = false;
+        let isHost = false; // Player 1 = Host, Player 2 = Joiner
+        let myReady = false;
+        
+        // Objects
         let bird, pipes, score, frame, gameLoop;
+        let turnOwner = 1; // 1 = Host's turn, 2 = P2's turn
 
-        // Auto Resize Canvas khớp với khung CSS
-        function resizeGame() {
-            canvas.width = wrapper.clientWidth;
-            canvas.height = wrapper.clientHeight;
-        }
+        // Resize
+        function resizeGame() { canvas.width = wrapper.clientWidth; canvas.height = wrapper.clientHeight; }
         window.addEventListener('resize', resizeGame);
-        // Gọi 1 lần lúc đầu sau khi load xong DOM
         setTimeout(resizeGame, 100);
 
-        // --- FIREBASE FUNCTIONS ---
-        function generateId(length) { return Math.random().toString(36).substring(2, 2 + length).toUpperCase(); }
+        // --- FIREBASE SYNC ---
+        function generateId(len) { return Math.random().toString(36).substring(2, 2 + len).toUpperCase(); }
 
+        // 1. CREATE ROOM
         function createRoom() {
             roomId = generateId(5);
             isHost = true;
-            db.ref('rooms/' + roomId).set({ status: 'waiting', action: null });
-            
-            // Listen for start
-            db.ref('rooms/' + roomId + '/status').on('value', (s) => {
-                if (s.val() === 'playing') startGameLocal();
+            // Reset room data
+            db.ref('rooms/' + roomId).set({
+                status: 'waiting',
+                players: { p1: false, p2: false },
+                action: null
             });
-
-            document.getElementById('menu').classList.add('hidden');
-            document.getElementById('waiting').classList.remove('hidden');
+            showScreen('waiting');
             document.getElementById('roomCodeDisplay').innerText = roomId;
-            
+            updateURL(roomId);
+            listenRoomStatus();
+        }
+
+        // 2. JOIN ROOM
+        function joinRoom() {
+            const input = document.getElementById('roomInput').value.toUpperCase();
+            if (!input) return alert("Masukkan Kode!");
+            roomId = input;
+            isHost = false;
+
+            db.ref('rooms/' + roomId).once('value', (s) => {
+                if (s.exists()) {
+                    // Cập nhật trạng thái phòng sang 'check_ready'
+                    db.ref('rooms/' + roomId).update({ status: 'check_ready' });
+                    listenRoomStatus();
+                } else { alert("Room tidak ditemukan!"); }
+            });
+        }
+
+        function updateURL(code) {
             const url = new URL(window.location);
-            url.searchParams.set('room', roomId);
+            url.searchParams.set('room', code);
             window.history.pushState({}, '', url);
         }
 
-        function joinRoom() {
-            const input = document.getElementById('roomInput').value.toUpperCase();
-            if (!input) return alert("Kode kosong!");
-            roomId = input;
-            
-            db.ref('rooms/' + roomId).once('value', (s) => {
-                if (s.exists()) {
-                    db.ref('rooms/' + roomId).update({ status: 'playing' });
-                    startGameLocal();
-                } else { alert("Room tidak ada!"); }
-            });
-        }
-
         function copyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => alert("Link disalin!"));
+            navigator.clipboard.writeText(window.location.href).then(() => alert("Link Copied!"));
         }
 
-        // Auto join from URL
+        // Auto-fill from URL
         const p = new URLSearchParams(window.location.search);
         if (p.get('room')) document.getElementById('roomInput').value = p.get('room');
 
-        // --- SYNC ---
-        function listenAction() {
+        // --- LISTENER CHÍNH ---
+        function listenRoomStatus() {
+            db.ref('rooms/' + roomId).on('value', (snap) => {
+                const data = snap.val();
+                if(!data) return;
+
+                // A. XỬ LÝ TRẠNG THÁI CHUNG
+                if (data.status === 'check_ready') {
+                    showScreen('readyCheck');
+                    updateReadyUI(data.players);
+                } else if (data.status === 'countdown') {
+                    showScreen('countdownScreen');
+                    // Chỉ chạy countdown visual ở client, logic gọi game start sau
+                } else if (data.status === 'playing' && gameState !== 'PLAYING') {
+                    startGameLocal();
+                }
+
+                // B. XỬ LÝ TRONG GAME (Action Jump/Die)
+                if (data.action && gameState === 'PLAYING') {
+                    // Reset action sau khi xử lý để tránh lặp (optional, but firebase events trigger once)
+                }
+            });
+
+            // Listen Action Riêng để nhanh hơn
             db.ref('rooms/' + roomId + '/action').on('value', (s) => {
                 const val = s.val();
-                if (val && val.type === 'jump') bird.jump();
-                if (val && val.type === 'die') gameOverLocal(val.score);
+                if (gameState === 'PLAYING' && val) {
+                    if (val.type === 'jump') bird.jump();
+                    if (val.type === 'die') gameOverLocal(val.score);
+                }
             });
         }
-        function sendJump() { db.ref('rooms/' + roomId + '/action').set({ type: 'jump', t: Date.now() }); }
-        function sendDie(sc) { db.ref('rooms/' + roomId + '/action').set({ type: 'die', score: sc, t: Date.now() }); }
 
-        // --- GAMEPLAY ---
+        // --- READY LOGIC ---
+        function sendReady() {
+            if (myReady) return;
+            myReady = true;
+            document.getElementById('btnReady').innerText = "MENUNGGU...";
+            document.getElementById('btnReady').disabled = true;
+
+            const playerKey = isHost ? 'p1' : 'p2';
+            db.ref(`rooms/${roomId}/players/${playerKey}`).set(true);
+        }
+
+        function updateReadyUI(players) {
+            if (!players) return;
+            
+            // Update Icon Colors
+            const p1Icon = document.getElementById('p1StatusIcon');
+            const p2Icon = document.getElementById('p2StatusIcon');
+
+            p1Icon.style.borderColor = players.p1 ? '#22c55e' : '#6b7280'; // Green if ready
+            p1Icon.innerText = players.p1 ? '✅' : '👤';
+            
+            p2Icon.style.borderColor = players.p2 ? '#22c55e' : '#6b7280';
+            p2Icon.innerText = players.p2 ? '✅' : '👤';
+
+            // Host Logic: Check if both ready -> Start Countdown
+            if (isHost && players.p1 && players.p2) {
+                // Delay 1 xíu cho đẹp
+                setTimeout(() => {
+                    db.ref('rooms/' + roomId).update({ status: 'countdown' });
+                    // Start Countdown Timer
+                    runCountdownSequence();
+                }, 500);
+            } else if (!isHost && players.p1 && players.p2) {
+                 runCountdownSequence(); // Client cũng chạy visual countdown
+            }
+        }
+
+        function runCountdownSequence() {
+            let count = 5;
+            const el = document.getElementById('countNum');
+            
+            const timer = setInterval(() => {
+                el.innerText = count;
+                count--;
+                if (count < 0) {
+                    clearInterval(timer);
+                    if (isHost) {
+                        db.ref('rooms/' + roomId).update({ status: 'playing' });
+                    }
+                }
+            }, 1000);
+        }
+
+        // --- UI HELPER ---
+        function showScreen(id) {
+            ['menu', 'waiting', 'readyCheck', 'countdownScreen', 'gameOver'].forEach(s => {
+                document.getElementById(s).classList.add('hidden');
+            });
+            if(id) document.getElementById(id).classList.remove('hidden');
+        }
+
+        // --- GAME ENGINE ---
         function startGameLocal() {
-            resizeGame(); // Ensure size is correct
+            resizeGame();
             gameState = 'PLAYING';
-            ['menu', 'waiting', 'gameOver'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            showScreen(null); // Hide overlays
+            document.getElementById('gameHUD').classList.remove('hidden');
 
-            bird = { 
-                x: canvas.width * 0.1, 
-                y: canvas.height / 2, 
-                v: 0, 
-                g: canvas.height * 0.0015, // Gravity responsive
-                jump: -canvas.height * 0.02 // Jump responsive
-            };
-            bird.jump = function() { this.v = this.jump; };
+            bird = { x: canvas.width * 0.15, y: canvas.height / 2, v: 0, g: canvas.height * 0.0018, jumpPower: -canvas.height * 0.022 };
+            bird.jump = function() { this.v = this.jumpPower; };
             bird.update = function() { this.v += this.g; this.y += this.v; };
 
             pipes = [];
             score = 0;
             frame = 0;
-            listenAction();
+            turnOwner = 1; // Start with Host
+            
             gameLoop = requestAnimationFrame(update);
         }
 
@@ -227,23 +345,45 @@
             if (gameState !== 'PLAYING') return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Bird
+            // 1. TURN LOGIC (Đổi lượt mỗi 5 điểm hoặc mỗi 300 frames ~ 5s)
+            // Cách đơn giản: Cứ 300 frame (khoảng 5s) đổi lượt 1 lần
+            if (frame % 300 === 0 && frame > 0) {
+                turnOwner = turnOwner === 1 ? 2 : 1;
+            }
+
+            // Update UI Turn Indicator
+            const turnBox = document.getElementById('turnIndicator');
+            const turnText = document.getElementById('turnText');
+            
+            // Logic: Ai là người phải bấm?
+            // isHost = true (P1), turnOwner = 1 => "Lượt Bạn"
+            // isHost = false (P2), turnOwner = 2 => "Lượt Bạn"
+            const isMyTurn = (isHost && turnOwner === 1) || (!isHost && turnOwner === 2);
+
+            if (isMyTurn) {
+                turnBox.className = "px-4 py-2 rounded-full border border-green-400 bg-green-600/80 shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all";
+                turnText.innerText = "YOUR TURN! (BẤM)";
+            } else {
+                turnBox.className = "px-4 py-2 rounded-full border border-red-400 bg-red-600/80 opacity-50";
+                turnText.innerText = "WAIT... (ĐỢI)";
+            }
+
+            // 2. BIRD
             bird.update();
-            ctx.fillStyle = "#FF4081"; // Pink
+            ctx.fillStyle = "#ec4899";
             ctx.beginPath();
-            ctx.arc(bird.x, bird.y, canvas.width * 0.04, 0, Math.PI * 2);
+            ctx.arc(bird.x, bird.y, canvas.width * 0.035, 0, Math.PI * 2);
             ctx.fill();
-            // Heart Icon inside
             ctx.fillStyle = "white";
-            ctx.font = (canvas.width * 0.04) + "px Arial";
-            ctx.fillText("❤️", bird.x - (canvas.width * 0.02), bird.y + (canvas.width * 0.015));
+            ctx.font = (canvas.width * 0.03) + "px Arial";
+            ctx.fillText("❤️", bird.x - (canvas.width * 0.018), bird.y + (canvas.width * 0.012));
 
-            // Pipes Logic
+            // 3. PIPES
             const pipeW = canvas.width * 0.15;
-            const gap = canvas.height * 0.3; // Gap rộng hơn chút cho dễ chơi
-            const speed = canvas.width * 0.008;
+            const gap = canvas.height * 0.28; 
+            const speed = canvas.width * 0.009;
 
-            if (frame % 180 === 0) {
+            if (frame % 160 === 0) {
                 let topH = Math.random() * (canvas.height - gap - 100) + 50;
                 pipes.push({ x: canvas.width, top: topH, passed: false });
             }
@@ -253,66 +393,84 @@
                 p.x -= speed;
                 
                 // Draw
-                ctx.fillStyle = "#4CAF50";
-                ctx.fillRect(p.x, 0, pipeW, p.top);
-                ctx.fillRect(p.x, p.top + gap, pipeW, canvas.height - (p.top + gap));
+                ctx.fillStyle = "#22c55e"; // Green Pipe
+                ctx.fillRect(p.x, 0, pipeW, p.top); // Top
+                ctx.fillRect(p.x, p.top + gap, pipeW, canvas.height - (p.top + gap)); // Bottom
+                
+                // Border pipe
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#14532d";
+                ctx.strokeRect(p.x, 0, pipeW, p.top);
+                ctx.strokeRect(p.x, p.top + gap, pipeW, canvas.height - (p.top + gap));
 
                 // Collision
-                // (Đơn giản hóa collision hình chữ nhật cho nhẹ)
+                const bx = bird.x; const by = bird.y; const br = canvas.width * 0.035 * 0.8; // hitbox nhỏ hơn visual xíu
                 if (
-                    bird.x + (canvas.width * 0.02) > p.x && 
-                    bird.x - (canvas.width * 0.02) < p.x + pipeW &&
-                    (bird.y - (canvas.width * 0.02) < p.top || bird.y + (canvas.width * 0.02) > p.top + gap)
+                    bx + br > p.x && bx - br < p.x + pipeW &&
+                    (by - br < p.top || by + br > p.top + gap)
                 ) {
                     if (isHost) sendDie(score);
                 }
 
+                // Score
                 if (p.x + pipeW < bird.x && !p.passed) {
                     score++;
                     p.passed = true;
+                    document.getElementById('hudScore').innerText = score;
                 }
             }
 
-            // Boundary Check
-            if (bird.y > canvas.height || bird.y < 0) { if(isHost) sendDie(score); }
-
-            // Score
-            ctx.fillStyle = "white";
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 4;
-            ctx.font = "bold " + (canvas.width * 0.1) + "px sans-serif";
-            ctx.strokeText(score, canvas.width/2 - 10, canvas.height * 0.15);
-            ctx.fillText(score, canvas.width/2 - 10, canvas.height * 0.15);
+            // Floor Collision
+            if (bird.y > canvas.height || bird.y < 0) { if (isHost) sendDie(score); }
 
             frame++;
-            requestAnimationFrame(update);
+            gameLoop = requestAnimationFrame(update);
         }
 
-        // Input
+        // --- INPUT ---
         const handleInput = (e) => {
-            if (e.type === 'touchstart') e.preventDefault(); // Chống cuộn trang
-            if (gameState === 'PLAYING') sendJump();
+            if (e.type === 'touchstart') e.preventDefault();
+            if (gameState === 'PLAYING') {
+                // Optional: Chỉ cho phép bấm nếu đúng lượt? 
+                // Không, để game vui vẻ, cho phép cứu bồ. Nhưng hiển thị cảnh báo visual là đủ.
+                sendJump(); 
+            }
         };
         wrapper.addEventListener('mousedown', handleInput);
         wrapper.addEventListener('touchstart', handleInput);
         window.addEventListener('keydown', (e) => { if(e.code==='Space') handleInput(e); });
 
-        // Game Over
+        // --- FIREBASE ACTIONS ---
+        function sendJump() { db.ref('rooms/' + roomId + '/action').set({ type: 'jump', t: Date.now() }); }
+        function sendDie(sc) { db.ref('rooms/' + roomId + '/action').set({ type: 'die', score: sc, t: Date.now() }); }
+
         function gameOverLocal(finalScore) {
             gameState = 'GAMEOVER';
             cancelAnimationFrame(gameLoop);
-            document.getElementById('gameOver').classList.remove('hidden');
+            document.getElementById('gameHUD').classList.add('hidden');
+            showScreen('gameOver');
             document.getElementById('finalScore').innerText = finalScore;
             
             const txt = document.getElementById('fateResult');
-            if (finalScore >= 10) txt.innerHTML = "✨ <b>SEMPURNA!</b><br>Kekompakan kalian level Dewa! Masalah apapun pasti lewat.";
-            else if (finalScore >= 5) txt.innerHTML = "👍 <b>HEBAT!</b><br>Cukup serasi. Sedikit lagi latihan agar makin kompak.";
-            else txt.innerHTML = "😅 <b>BELAJAR LAGI!</b><br>Hubungan butuh kesabaran. Yuk coba lagi sinkronkan hati!";
+            if (finalScore >= 15) txt.innerHTML = "✨ <b>JODOH SEJATI!</b><br>Sinkronisasi kalian luar biasa. Pertahankan kekompakan ini!";
+            else if (finalScore >= 5) txt.innerHTML = "👍 <b>CUKUP BAIK</b><br>Kalian bisa saling melengkapi, tapi butuh komunikasi lebih.";
+            else txt.innerHTML = "😅 <b>BUTUH LATIHAN</b><br>Jangan menyerah! Coba dengarkan ritme pasanganmu.";
         }
 
         function restartGame() {
-            if (isHost) db.ref('rooms/' + roomId).update({ status: 'playing', action: null });
-            else location.reload();
+            // Reset variables
+            myReady = false;
+            document.getElementById('btnReady').disabled = false;
+            document.getElementById('btnReady').innerText = "SIAP (READY)";
+            document.getElementById('hudScore').innerText = "0";
+            
+            if (isHost) {
+                // Reset server state -> Back to Check Ready
+                db.ref('rooms/' + roomId).update({
+                    status: 'check_ready',
+                    players: { p1: false, p2: false }
+                });
+            }
         }
     </script>
 </body>
